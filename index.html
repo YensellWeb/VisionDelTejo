@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELTEJO VISION | Portfolio</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        /* ===== Categorias de video / foto (agregado) ===== */
+        .category-block{
+            margin-top: 50px;
+        }
+        .category-block .cat-header{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom: 22px;
+        }
+        .category-block .cat-header i{
+            font-size: 22px;
+            color: var(--secondary-color, #7000ff);
+        }
+        .category-block .cat-header h4{
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .category-block .cat-header p{
+            font-size: 13px;
+            opacity: .6;
+            margin-left: auto;
+        }
+        /* ===== Contact Me modernizado (agregado) ===== */
+        .status-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: rgba(112,0,255,0.12);
+            border: 1px solid rgba(112,0,255,0.35);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 22px;
+            width: fit-content;
+        }
+        .status-badge .dot{
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #21d07a;
+            box-shadow: 0 0 0 0 rgba(33,208,122,.6);
+            animation: pulse-dot 1.8s infinite;
+        }
+        @keyframes pulse-dot{
+            0%{ box-shadow: 0 0 0 0 rgba(33,208,122,.55); }
+            70%{ box-shadow: 0 0 0 8px rgba(33,208,122,0); }
+            100%{ box-shadow: 0 0 0 0 rgba(33,208,122,0); }
+        }
+        .contact-socials-modern{
+            display:flex;
+            gap: 12px;
+            margin-top: 26px;
+            flex-wrap: wrap;
+        }
+        .contact-socials-modern a{
+            width: 44px;
+            height: 44px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius: 50%;
+            border: 1px solid rgba(127,127,127,0.3);
+            font-size: 17px;
+            transition: transform .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
+        }
+        .contact-socials-modern a:hover{
+            transform: translateY(-4px);
+            background: #7000ff;
+            border-color: #7000ff;
+            color: #fff;
+        }
+        .contact-form-modern .input-control input,
+        .contact-form-modern .input-control textarea{
+            border-radius: 10px !important;
+        }
+        .contact-note{
+            font-size: 12.5px;
+            opacity: .65;
+            margin-top: 14px;
+        }
+        /* ===== Video modal (agregado) ===== */
+        .blog[data-video]{
+            cursor: pointer;
+            position: relative;
+        }
+        .blog[data-video] img{
+            transition: filter .25s ease;
+        }
+        .blog[data-video]:hover img{
+            filter: brightness(0.6);
+        }
+        .blog[data-video]::after{
+            content: "";
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.55);
+            opacity: 0;
+            transition: opacity .25s ease;
+            pointer-events: none;
+        }
+        .blog[data-video]::before{
+            content: "";
+            position: absolute;
+            top: 35%;
+            left: calc(50% + 3px);
+            transform: translate(-50%,-50%);
+            width: 0;
+            height: 0;
+            border-top: 11px solid transparent;
+            border-bottom: 11px solid transparent;
+            border-left: 18px solid #fff;
+            opacity: 0;
+            transition: opacity .25s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .blog[data-video]:hover::after,
+        .blog[data-video]:hover::before{
+            opacity: 1;
+        }
+        .video-modal{
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 50px 20px;
+        }
+        .video-modal.active{
+            display: flex;
+        }
+        .video-modal-inner{
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+        .video-modal-inner iframe,
+        .video-modal-inner video{
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .video-modal-close{
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            color: #fff;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body class="main-content">
+    <header class="container header active" id="home">
+        <div class="header-content">
+            <div class="left-header">
+                <div class="h-shape"></div>
+                <div class="image">
+                    <img src="img/port5.jpg" alt="">
+                </div>
+            </div>
+            <div class="right-header">
+                <h1 class="name">
+                    Hi, I'm <span>DELTEJO VISION.</span>
+                    A Professional Filmmaker, Video Editor and Photographer.
+                </h1>
+                <p>
+                    I pride myself on delivering polished, visually striking video and photo work that meets client needs.
+                    My approach emphasizes strong storytelling, sharp attention to detail, and continuous learning to stay current with industry trends and best practices, my goal is to transform ideas into impactful visual experiences, consistently exceeding client expectations.
+                    
+                </p>
+                <!-- <div class="btn-con">
+                    <a href="https://docs.google.com/document/d/1AUf84SVprtDFYmq6UH9A0Mv2Jo4eQ-66Hc7XBdGfWdM/edit?usp=sharing" class="main-btn">
+                        <span class="btn-text">Resume</span>
+                        <span class="btn-icon"><i class="fas fa-download"></i></span>
+                    </a>
+                </div> -->
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="container about" id="about">
+            <div class="main-title">
+                <h2>Video <span>Editing</span><span class="bg-text">Premiere & After Effects</span></h2>
+            </div>
+            <div class="about-container">
+                <div class="left-about">
+                    <h4>Video Editor</h4>
+                    <p>
+                        I edit and bring video stories to life using Adobe Premiere Pro and After Effects,
+                        from dynamic cuts to motion graphics and color grading.
+                        <br /><br />
+                        I work every project with close attention to pacing, storytelling and detail,
+                        adapting the editing style to what each client needs: sports, commercials,
+                        ads, music videos, or 3D graphics pieces.
+                    </p>
+                    <!-- <div class="btn-con">
+                        <a href="#" class="main-btn">
+                            <span class="btn-text">My Reel</span>
+                            <span class="btn-icon"><i class="fas fa-play"></i></span>
+                        </a>
+                    </div> -->
+                </div>
+                <div class="right-about">
+                    <div class="about-item">
+                        <div class="abt-text">
+                            <p class="large-text">50+</p>
+                            <p class="small-text">Videos <br /> Edited</p>
+                        </div>
+                    </div>
+                    <div class="about-item">
+                        <div class="abt-text">
+                            <p class="large-text">2+</p>
+                            <p class="small-text">Years of <br /> Experience</p>
+                        </div>
+                    </div>
+                    <div class="about-item">
+                        <div class="abt-text">
+                            <p class="large-text">100+</p>
+                            <p class="small-text">Happy <br /> Clients</p>
+                        </div>
+                    </div>
+                    <div class="about-item">
+                        <div class="abt-text">
+                            <p class="large-text">5</p>
+                            <p class="small-text">Video <br /> Categories</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-stats">
+                <h4 class="stat-title">My Skills</h4>
+                <div class="progress-bars">
+                    <div class="progress-bar">
+                        <p class="prog-title">Premiere Pro</p>
+                        <div class="progress-con">
+                            <p class="prog-text">90%</p>
+                            <div class="progress">
+                                <span class="html"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <p class="prog-title">After Effects</p>
+                        <div class="progress-con">
+                            <p class="prog-text">85%</p>
+                            <div class="progress">
+                                <span class="css"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <p class="prog-title">Color Grading</p>
+                        <div class="progress-con">
+                            <p class="prog-text">80%</p>
+                            <div class="progress">
+                                <span class="js"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <p class="prog-title">Motion Graphics</p>
+                        <div class="progress-con">
+                            <p class="prog-text">75%</p>
+                            <div class="progress">
+                                <span class="react"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <p class="prog-title">Sound Design</p>
+                        <div class="progress-con">
+                            <p class="prog-text">80%</p>
+                            <div class="progress">
+                                <span class="node"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <p class="prog-title">3D Graphics</p>
+                        <div class="progress-con">
+                            <p class="prog-text">70%</p>
+                            <div class="progress">
+                                <span class="python"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== VIDEO CATEGORIES ===================== -->
+            <!-- data-video goes on the outer .blog card, NOT on a separate inner div. -->
+
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="fas fa-futbol"></i>
+                    <h4>Sports</h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="https://youtu.be/TBmgOtPENQ0?si=igTGPfKRluJczZNc">
+                        <img src="img/port1.jpg" alt="Sports video">
+                        <div class="blog-text">
+                            <h4>Formula 1 — Pushed to the Limit</h4>
+                            <p>High-octane sports edit capturing the speed, precision, and adrenaline of Formula 1 racing. Fast-paced cuts synced to the engine roar and rhythm of the race, paired with dynamic color grading to bring out the intensity of every lap and the raw energy of the track.</p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://youtu.be/XwGWfI9Cqp0?si=wd7J00OwR9uisugD">
+                        <img src="img/port3.jpg" alt="Sports video">
+                        <div class="blog-text">
+                            <h4>Messi & Ronaldo — The Price of Greatness</h4>
+                            <p>Motivational sports edit celebrating the dedication and work ethic behind two of football's greatest legends. Built with heavy After Effects work — dynamic transitions, text animations, and layered visual effects synced to an intense soundtrack — the piece captures the discipline, practice, and mindset it takes to reach the top.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="fas fa-briefcase"></i>
+                    <h4>Commercial</h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="https://youtu.be/RpcX4TmCgJA?si=RqwZldsU3lUVknpF">
+                        <img src="img/blog1.jpg" alt="Commercial video">
+                        <div class="blog-text">
+                            <h4>Hugo Boss — The Scent of Confidence</h4>
+                            <p>Commercial piece edited for Hugo Boss, blending dynamic cuts with cinematic color grading to highlight the fragrance's elegance and character. The edit focuses on smooth transitions and visual pacing synced to the music, creating a sophisticated atmosphere that connects with the brand's identity.</p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                        <img src="img/blog2.jpg" alt="Commercial video">
+                        <div class="blog-text">
+                            <h4>COMING SOON!</h4>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="fas fa-bullhorn"></i>
+                    <h4>Ads</h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="https://youtu.be/bYTtnM4--BM">
+                        <img src="img/blog3.jpg" alt="Ad">
+                        <div class="blog-text">
+                            <h4>CityTech Store — Technology That Moves With You</h4>
+                            <p>Commercial edit for CityTech Store, showcasing the latest phones, Apple Watches, and electronics through crisp, modern cuts and sleek product close-ups. Clean color grading and a polished visual rhythm highlight the sophistication of the devices, giving the store a premium, tech-forward feel that draws customers in.</p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://youtube.com/shorts/1ZlZ5oL5iss?feature=share">
+                        <img src="img/port6.jpg" alt="Ad">
+                        <div class="blog-text">
+                            <h4>Motion Graphics — Brands in Motion</h4>
+                            <p>Animated motion graphics piece designed for ads and corporate branding, combining clean typography, smooth transitions, and dynamic visual elements to communicate a company's message with clarity and style. Built in After Effects, the animation reinforces brand identity while keeping the pacing sharp and engaging for social media and digital campaigns. </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="fas fa-music"></i>
+                    <h4>Music Videos & Stadiums</h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="https://youtu.be/WqbpgJzCC80">
+                        <img src="img/hero.png" alt="Music video">
+                        <div class="blog-text">
+                            <h4>Eladio Carrión — Live at the Stadium</h4>
+                            <p>Concert edit capturing the raw energy of Eladio Carrión's stadium performance, with crowd shots, stage lighting, and dynamic cuts synced to the beat. Fast-paced editing and color grading bring out the intensity of a live show, translating the crowd's energy and the artist's stage presence into a high-impact visual experience.</p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                        <img src="img/blog2.jpg" alt="Music video">
+                        <div class="blog-text">
+                            <h4>Music Video 2</h4>
+                            <p>COMING SOON!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="as fa-music"></i>
+                    <h4>Events & Life</h4>
+                </div>
+            </div></h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="videos/ELADIOOFICIAL">
+                        <img src="img/blog2.jpg" alt="Music video">
+                        <div class="blog-text">
+                            <h4>WEDDING</h4>
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                        <img src="img/blog2.jpg" alt="Music video">
+                        <div class="blog-text">
+                            <h4>COMING SOON!</h4>
+                            <p>COMING SOON</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="category-block">
+                <div class="cat-header">
+                    <i class="fas fa-cube"></i>
+                    <h4>3D Graphics</h4>
+                </div>
+                <div class="blogs">
+                    <div class="blog" data-video="https://youtu.be/yI7jajoJzDQ">
+                        <img src="img/port7.jpg" alt="3D Graphics">
+                        <div class="blog-text">
+                            <h4>Messi — Legend Rising</h4>
+                            <p>3D motion graphics piece featuring Messi's logo animating dynamically over a stadium backdrop, with a bold entrance sequence that builds anticipation. Camera movement, lighting effects, and smooth 3D transitions bring the emblem to life, creating a powerful intro perfect for sports branding or a match-day opener.</p>
+                        </div>
+                    </div>
+                    <div class="blog" data-video="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                        <img src="img/blog2.jpg" alt="3D Graphics">
+                        <div class="blog-text">
+                            <h4>COMING SOON!</h4>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="stat-title">My Timeline</h4>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="tl-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <p class="tl-duration">2021 - present</p>
+                    <h5>Video Editor<span> - Freelancer</span></h5>
+                    <p>
+                        Video editing for clients across sports, commercials, ads and music content,
+                        using Premiere Pro and After Effects to deliver pieces with pacing and visual impact.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <p class="tl-duration">2021 - 2022</p>
+                    <h5>Workshops & Courses<span> </span> - Motion Graphics</h5>
+                    <p>
+                        Trained in motion graphics, color grading and animation in After Effects
+                        to expand my skills as an editor.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <p class="tl-duration">2023 - 2025</p>
+                    <h5>Freelance Editor <span> - Commercial Projects</span></h5>
+                    <p>
+                       Edited commercial campaigns and ads, collaborating with brands to deliver
+                       polished content ready for social media.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <p class="tl-duration">2022 - 2023</p>
+                    <h5>Collaborations<span> - Music Videos</span></h5>
+                    <p>
+                       Edited and post-produced music videos, integrating color grading and
+                       motion graphics to strengthen the visual narrative.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="container" id="blogs">
+            <div class="blogs-content">
+                <div class="main-title">
+                    <h2>Film<span>maker</span><span class="bg-text">Filmmaker</span></h2>
+                </div>
+                <div class="main-title">
+                    <h2>PORTFOLIO <span>UPDATING</span><span class="bg-text">!</span></h2>
+                </div>
+                <!-- <div class="blogs">
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                              COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                              COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                               COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                               COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                               COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="">
+                        <div class="blog-text">
+                            <h4>
+                               COMING SOON!
+                            </h4>
+                            <p>
+                                COMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </section>
+
+        <!-- ===================== PHOTOGRAPHY (Lightroom & Photoshop) ===================== -->
+        <!-- New section. Replace the sample images with your own photos. -->
+        <section class="container" id="photography">
+            <div class="blogs-content">
+                <div class="main-title">
+                    <h2>Photo<span>graphy</span><span class="bg-text">Lightroom & Photoshop</span></h2>
+                </div>
+                <div class="blogs">
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="Edited photo">
+                        <div class="blog-text">
+                            <h4>
+                                Portrait
+                            </h4>
+                            <p>
+                            
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="Edited photo">
+                        <div class="blog-text">
+                            <h4>
+                               WEDDING
+                            </h4>
+                            <p>
+                                COMMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="blog">
+                        <img src="img/blog2.jpg" alt="Edited photo">
+                        <div class="blog-text">
+                            <h4>
+                                WEDDING
+                            </h4>
+                            <p>
+                                COMMING SOON!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+          <section class="container contact" id="contact">
+            <div class="contact-container">
+                <div class="main-title">
+                    <h2>Contact <span>Me</span><span class="bg-text">Contact</span></h2>
+                </div>
+                <div class="contact-content-con">
+                    <div class="left-contact">
+                        <div class="status-badge">
+                            <span class="dot"></span>
+                            Available for new projects
+                        </div>
+                        <h4>Let's talk about your project</h4>
+                        <p>
+                            Have a video, a campaign, or a photo shoot in mind? Reach out and tell me
+                            about it — I reply fast and would love to help bring it to life.
+                        </p>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <div class="icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Location</span>
+                                </div>
+                                <p>
+                                    : United States, Pennsylvania
+                                </p>
+                            </div>
+                            <div class="contact-item">
+                                <div class="icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Email</span>
+                                </div>
+                                <p>
+                                    <span>: YensellSantos@gmail.com</span>
+                                </p>
+                            </div>
+                            <div class="contact-item">
+                                <div class="icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                    <span>Mobile Number</span>
+                                </div>
+                                <p>
+                                    <span>: 445-287-3568 </span>
+                                </p>
+                            </div>
+                            <div class="contact-item">
+                                <div class="icon">
+                                    <i class="fas fa-globe-africa"></i>
+                                    <span>Languages</span>
+                                </div>
+                                <p>
+                                    <span>: English, Spanish</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="contact-socials-modern">
+                            <a href="https://www.linkedin.com/in/yensell-amezquita-5826002a8?" target="_blank" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" target="_blank" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" target="_blank" aria-label="Vimeo">
+                                <i class="fab fa-vimeo-v"></i>
+                            </a>
+                        </div>
+                        <p class="contact-note">
+                            *Update the Instagram, YouTube and Vimeo links with your real profiles.
+                        </p>
+                    </div>
+                    <div class="right-contact">
+                        <form id="contactForm" action="" class="contact-form contact-form-modern">
+                            <div class="input-control i-c-2">
+                                <input type="text" name="from_name" required placeholder="YOUR NAME">
+                                <input type="email" name="from_email" required placeholder="YOUR EMAIL">
+                            </div>
+                            <div class="input-control">
+                                <input type="text" name="subject" required placeholder="SUBJECT">
+                            </div>
+                            <div class="input-control">
+                                <textarea name="message" id="" cols="15" rows="8" required placeholder="Tell me about your project..."></textarea>
+                            </div>
+                            <div class="btn-con">
+                                <button type="submit" class="main-btn" id="contactSubmitBtn">
+                                    <span class="btn-text">Send Message</span>
+                                    <span class="btn-icon"><i class="fas fa-paper-plane"></i></span>
+                                </button>
+                            </div>
+                            <p id="contactFormStatus" style="margin-top:14px; font-size:13px;"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="controls">
+        <div class="control active-btn" data-id="home" >
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="control" data-id="about">
+            <i class="fas fa-film"></i>
+        </div>
+
+        <div class="control" data-id="blogs">
+            <i class="fas fa-camera"></i>
+        </div>
+        <div class="control" data-id="photography">
+            <i class="fas fa-camera-retro"></i>
+        </div>
+        <div class="control" data-id="contact">
+            <i class="fas fa-envelope-open"></i>
+        </div>
+    </div>
+    <div class="theme-btn">
+        <i class="fas fa-adjust"></i>
+    </div>
+
+    <!-- Video modal: opens when a video card in About/Video Editing is clicked -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-close" id="videoModalClose"><i class="fas fa-times"></i></div>
+        <div class="video-modal-inner" id="videoModalContent"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
